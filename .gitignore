@@ -1,0 +1,6 @@
+.conda/
+.snakemake/
+kraken_reports/
+kraken_reports.old/
+centrifuge_reports/
+logs/
