@@ -2,5 +2,6 @@
 .snakemake/
 kraken_reports/
 kraken_reports.old/
+kraken_reports.testing/
 centrifuge_reports/
 logs/

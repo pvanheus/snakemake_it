@@ -6,4 +6,4 @@ if [ -z "$SN_PATH"] ; then
   conda activate snakemake
 fi
 
-snakemake --jobs 4 --use-singularity --use-conda --cluster-config cluster.yaml --cluster "sbatch -J {cluster.name} -e {cluster.error} -o {cluster.output} --mem {cluster.memory} -c {cluster.nCPUs}"
+snakemake --jobs 10 --use-singularity --use-conda --cluster-config cluster.yaml --cluster "sbatch -J {cluster.name} -e {cluster.error} -o {cluster.output} --mem {cluster.memory} -c {cluster.nCPUs}"

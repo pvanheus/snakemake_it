@@ -1,6 +1,5 @@
 patric_dir: '/projects/data/pvanheusden/patric_brc_southafrica'
+kraken2_report_dir: 'kraken_reports'
+centrifuge_report_dir: 'centrifuge_reports'
 kraken_db: '/tools/databases/kraken2/06082019'
 centrifuge_db: '/tools/databases/centrifuge/06082019/abv'
-sample_names:
-  - SRR974839
-  - SRR974840
