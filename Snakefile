@@ -58,10 +58,16 @@ rule merge_kraken2:
             for filename in input:
                 sample_name = os.path.basename(filename).split('.')[0]
                 with open(filename) as infile:
+                    mycobacterium_read_total = 0
+                    total_read_count = 0
                     for line in infile:
-                        if line.endswith('Mycobacterium\n'):
-                            fields = line.split()
-                            print(sample_name, fields[0], sep='\t', file=out_file)
+                        fields = line.split('\t')
+                        if fields[-1].strip() in ('unclassified', 'root'):
+                            total_read_count += int(fields[1])
+                        elif fields[-1].strip().startswith('Mycobacterium'):
+                            mycobacterium_read_total += int(fields[2])
+                    mycobacterium_percentage = round(float(mycobacterium_read_total) / total_read_count * 100, ndigits=2)
+                    print(sample_name, mycobacterium_percentage, sep='\t', file=out_file)
 
 
 rule merge_centrifuge:
