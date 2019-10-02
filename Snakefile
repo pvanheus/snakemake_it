@@ -16,8 +16,7 @@ def reports(tool, suffix):
 
 rule all:
     input:
-        'merged/kraken2.txt',
-        'merged/centrifuge.txt'
+        'merged/SA_genomes_from_PATRIC_annotated.csv'
 
 rule kraken2:
     input:
@@ -87,3 +86,57 @@ rule merge_centrifuge:
                             fields = line.split()
                             percentage = round(float(fields[-1]) * 100, ndigits=2)
                             print(sample_name, percentage, sep='\t', file=out_file)
+
+rule merge_with_patric:
+    input:
+        'SA_genomes_from_PATRIC.csv',
+        'merged/kraken2.txt',
+        'merged/centrifuge.txt'
+    output:
+        'merged/SA_genomes_from_PATRIC_annotated.csv'
+    run:
+        import csv
+
+        def read_results_file(filename):
+            results = dict()
+            with open(filename) as in_file:
+                for line in in_file:
+                    fields = line.strip().split()
+                    results[fields[0]] = fields[1]
+            return results
+
+        metadata_filename = input[0]
+        kraken2_filename = input[1]
+        centrifuge_filename = input[2]
+
+        sample_kraken2_perc = read_results_file(kraken2_filename)
+        sample_centrifuge_perc = read_results_file(centrifuge_filename)
+        output_filename = output[0]
+        
+        reader = csv.reader(open(metadata_filename))
+        header = next(reader)
+        header.append('Kraken2 TB %')
+        header.append('Centrifuge TB %')
+        with open(output_filename, 'w') as out_file:
+            writer = csv.writer(out_file)
+            for row in reader:
+                # row[18] is the SRA Accession column
+                if "," in row[18]:
+                    SRA_accession = row[18].split(',')[0].strip()
+                elif row[18].strip() != '':
+                    SRA_accession = row[18].strip()  # discard all SRA accessions besides the first for simplicity's sake
+                else:
+                    SRA_accession = None
+
+                if SRA_accession and SRA_accession in sample_kraken2_perc:
+                    row.append(sample_kraken2_perc[SRA_accession])
+                else:
+                    row.append('')
+
+                if SRA_accession and SRA_accession in sample_centrifuge_perc:
+                    row.append(sample_centrifuge_perc[SRA_accession])
+                else:
+                    row.append('')
+                
+                writer.writerow(row)
+            
