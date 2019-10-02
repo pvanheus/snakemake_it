@@ -4,4 +4,5 @@ kraken_reports/
 kraken_reports.old/
 kraken_reports.testing/
 centrifuge_reports/
+merged/
 logs/
